@@ -46,7 +46,7 @@ with open("data.txt") as f:
         img = img/255.0
         steering_angle = scaled_angle(steering_angle)             
         image.append(img)
-        angle.append(angle)
+        angle.append(steering_angle)
         
         c = c + 1
         if(c%500.0== 0.0):
