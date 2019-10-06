@@ -53,7 +53,7 @@ with open("data.txt") as f:
             print(c,":",img_name,",",steering_angle)
             
             
-with open("features", "wb") as f:
+with open("image", "wb") as f:
     pickle.dump(np.array(image), f, protocol=4)
     
 with open("angle", "wb") as f:
