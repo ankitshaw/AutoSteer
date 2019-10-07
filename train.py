@@ -7,13 +7,16 @@ import torch.nn.functional as F
 from tqdm import tqdm
 import torch.optim as optim
 
-
+#Load Data
 with open("image", "rb") as f:
         images = np.array(pickle.load(f))
 with open("angle", "rb") as f:
         angles = np.array(pickle.load(f))
         
+#Shuffle Data
 features, labels = shuffle(images, angles)
+
+#Split Dataset
 train_x, test_x, train_y, test_y = train_test_split(features, labels, random_state=0,test_size=0.3)
 
 train_x = torch.from_numpy(train_x).float()
@@ -23,7 +26,7 @@ test_y = torch.from_numpy(test_y).float()
 
 train_x.shape, train_y.shape
 
-
+#Build Model
 class Net(nn.Module):
     def __init__(self):
         super(Net, self).__init__()
@@ -39,8 +42,7 @@ class Net(nn.Module):
         self.pool5 = nn.MaxPool2d(2, 2)
         self.conv6 = nn.Conv2d(128, 128, 3,padding=2)
         self.pool6 = nn.MaxPool2d(2, 2)
-      
-      
+        
         x = torch.rand(100,100).view(-1,1,100,100)
         self.to_linear = None
         self.convs(x)
@@ -60,9 +62,8 @@ class Net(nn.Module):
           
           if self.to_linear is None:
               self.to_linear = x[0].shape[0]*x[0].shape[1]*x[0].shape[2]
-              
+          
           return x
-        
 
     def forward(self, x):
         x = self.convs(x)
@@ -75,13 +76,13 @@ class Net(nn.Module):
 
 
 net = Net()
-optimizer = optim.Adam(net.parameters(), lr=0.001)
+optimizer = optim.Adam(net.parameters(), lr=0.001)      #Optimizer
 loss_function = nn.MSELoss()
 
 
 BATCH_SIZE = 32
 EPOCHS = 3
-for epoch in range(EPOCHS):
+for epoch in range(EPOCHS):     #Training
     for i in tqdm(range(0, len(train_x), BATCH_SIZE)): 
         #print(f"{i}:{i+BATCH_SIZE}")
         batch_X = train_x[i:i+BATCH_SIZE].view(-1, 1, 100, 100)
@@ -96,6 +97,6 @@ for epoch in range(EPOCHS):
 
     print(f"Epoch: {epoch}. Loss: {loss}")
 
-
+#Save Model
 PATH = './steer_net.pth'
 torch.save(net.state_dict(), PATH)
